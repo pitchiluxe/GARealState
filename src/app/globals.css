@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --surface-base:    #0A0F1E;
+    --surface-raised:  #0F1629;
+    --surface-overlay: #111827;
+    --surface-border:  #1f2937;
+    --surface-muted:   #374151;
+
+    --color-primary:   #3b82f6;
+    --color-ai:        #8b5cf6;
+    --color-re:        #E8825A;   /* Georgia Peach */
+
+    --color-success:   #10b981;
+    --color-warning:   #f59e0b;
+    --color-danger:    #ef4444;
+
+    --background: 222 47% 7%;
+    --foreground: 210 40% 98%;
+    --radius: 0.75rem;
+  }
+
+  * { border-color: rgba(255, 255, 255, 0.08); box-sizing: border-box; }
+
+  html {
+    background: var(--surface-base);
+    color: #f1f5f9;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply antialiased font-sans;
+    background: var(--surface-base);
+    color: #f1f5f9;
+    overflow-x: hidden;
+    max-width: 100vw;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  img, video, svg, canvas { max-width: 100%; }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  ::-webkit-scrollbar       { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--surface-base); }
+  ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+}
+
+@layer components {
+  /* ── Glass card ── */
+  .glass-card {
+    @apply bg-white/[0.06] border border-white/[0.08] rounded-xl;
+    background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg;
+  }
+
+  /* ── Glow effects ── */
+  .glow-peach  { box-shadow: 0 0 20px rgba(232, 130, 90,  0.30); }
+  .glow-blue   { box-shadow: 0 0 20px rgba(59,  130, 246, 0.30); }
+  .glow-violet { box-shadow: 0 0 20px rgba(139, 92,  246, 0.30); }
+  .glow-amber  { box-shadow: 0 0 20px rgba(245, 158, 11,  0.25); }
+  .glow-red    { box-shadow: 0 0 20px rgba(239, 68,  68,  0.25); }
+
+  /* ── Status badges ── */
+  .status-open      { @apply bg-blue-500/20    text-blue-400    border border-blue-500/30;   }
+  .status-progress  { @apply bg-yellow-500/20  text-yellow-400  border border-yellow-500/30; }
+  .status-escalated { @apply bg-red-500/20     text-red-400     border border-red-500/30;    }
+  .status-resolved  { @apply bg-green-500/20   text-green-400   border border-green-500/30;  }
+  .status-closed    { @apply bg-gray-500/20    text-gray-400    border border-gray-500/30;   }
+
+  /* ── Score badges ── */
+  .score-pass { @apply bg-green-500/20  text-green-400  border border-green-500/30;  }
+  .score-fail { @apply bg-red-500/20    text-red-400    border border-red-500/30;    }
+  .score-na   { @apply bg-gray-500/20   text-gray-400   border border-gray-500/30;   }
+
+  /* ── Sidebar nav item ── */
+  .sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400
+           transition-all duration-150 cursor-pointer;
+  }
+  .sidebar-item:hover { @apply bg-white/5 text-white; }
+  .sidebar-item.active {
+    @apply bg-re-500/15 text-re-400 border border-re-500/20;
+  }
+
+  /* ── Input field ── */
+  .input-field {
+    @apply w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm
+           text-white placeholder-gray-500 focus:outline-none focus:border-primary-500/50
+           focus:ring-1 focus:ring-primary-500/25 transition-all;
+    color-scheme: dark;
+  }
+
+  select, select.input-field {
+    color-scheme: dark;
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+  select option, select.input-field option {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+  }
+  select option:hover, select option:checked, select option:focus {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+  }
+
+  /* ── Buttons ── */
+  /* Georgia Peach — primary brand action */
+  .btn-primary {
+    @apply bg-re-500 hover:bg-re-600 text-white font-medium px-4 py-2.5 rounded-lg
+           transition-all duration-150 focus:outline-none focus:ring-2
+           focus:ring-re-500/50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+  }
+
+  /* Blue — secondary action */
+  .btn-action {
+    @apply bg-primary-600 hover:bg-primary-500 text-white font-medium px-4 py-2.5
+           rounded-lg transition-all duration-150 focus:outline-none
+           focus:ring-2 focus:ring-primary-500/40 disabled:opacity-40
+           disabled:cursor-not-allowed cursor-pointer;
+  }
+
+  /* Ghost */
+  .btn-secondary {
+    @apply bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300
+           hover:text-white font-medium px-4 py-2.5 rounded-lg transition-all
+           duration-150 cursor-pointer;
+  }
+
+  /* Danger */
+  .btn-danger {
+    @apply bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400
+           font-medium px-4 py-2.5 rounded-lg transition-all duration-150 cursor-pointer;
+  }
+
+  /* AI action (violet) */
+  .btn-ai {
+    @apply bg-ai-500/10 hover:bg-ai-500/20 border border-ai-500/30 text-ai-400
+           font-medium px-4 py-2.5 rounded-lg transition-all duration-150 cursor-pointer;
+  }
+
+  /* ── AI animations ── */
+  .ai-pulse { animation: aiPulse 2s ease-in-out infinite; }
+
+  @keyframes aiPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.7; transform: scale(1.05); }
+  }
+
+  .typing-dot {
+    @apply w-1.5 h-1.5 bg-re-400 rounded-full;
+    animation: typingBounce 1.2s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 1; }
+    30%           { transform: translateY(-6px); opacity: 0.6; }
+  }
+
+  /* ── Gradient text ── */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #E8825A, #f59e0b);
+  }
+
+  .gradient-text-ai {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  }
+
+  /* ── Obsidian Knowledge Brain ── */
+  .vault-nav-item {
+    @apply flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium
+           text-gray-500 transition-all duration-150 cursor-pointer hover:bg-white/5 hover:text-gray-300;
+  }
+  .vault-nav-active { @apply bg-violet-500/15 text-violet-300 border border-violet-500/20; }
+  .obsidian-editor  { @apply font-mono text-sm leading-relaxed; tab-size: 2; }
+  .obsidian-editor::selection { background-color: rgba(232, 130, 90, 0.3); }
+  .obsidian-editor::-webkit-scrollbar { width: 4px; }
+  .obsidian-editor::-webkit-scrollbar-track { background: transparent; }
+  .obsidian-editor::-webkit-scrollbar-thumb { background: rgba(232,130,90,0.3); border-radius: 2px; }
+
+  .graph-control-btn {
+    @apply w-7 h-7 flex items-center justify-center rounded-lg bg-[#0d1526]/80
+           border border-white/10 text-gray-500 hover:text-white hover:border-re-500/40
+           hover:bg-re-500/10 backdrop-blur-sm transition-all duration-150;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  .bg-white\/3  { background-color: rgba(255, 255, 255, 0.03); }
+  .bg-white\/4  { background-color: rgba(255, 255, 255, 0.04); }
+  .bg-white\/6  { background-color: rgba(255, 255, 255, 0.06); }
+  .bg-white\/8  { background-color: rgba(255, 255, 255, 0.08); }
+  .bg-white\/12 { background-color: rgba(255, 255, 255, 0.12); }
+
+  .text-balance { text-wrap: balance; }
+  .bg-ai-gradient { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+  .bg-re-gradient { background: linear-gradient(135deg, #E8825A, #f59e0b); }
+}
+
+.page-enter { animation: pageEnter 0.12s ease-out; }
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
