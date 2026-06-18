@@ -196,6 +196,15 @@
            border border-white/10 text-gray-500 hover:text-white hover:border-re-500/40
            hover:bg-re-500/10 backdrop-blur-sm transition-all duration-150;
   }
+
+  .graph-filter-btn {
+    @apply text-[10px] px-2 py-1 rounded-lg bg-[#0d1526]/80 border border-white/10
+           text-gray-600 hover:text-white hover:border-white/20 backdrop-blur-sm transition-colors;
+  }
+
+  .graph-filter-active {
+    @apply bg-re-500/20 border-re-500/30 text-re-300;
+  }
 }
 
 @layer utilities {
