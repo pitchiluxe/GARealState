@@ -79,7 +79,7 @@ export function FloatingStudyBot() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-[100] flex flex-col items-end gap-3 pointer-events-none">
+    <div className="fixed right-5 top-1/2 -translate-y-1/2 z-[100] flex flex-col items-end gap-3 pointer-events-none">
       {open && (
         <div className="pointer-events-auto bg-[#0d1426] border border-white/15 rounded-2xl shadow-2xl w-[340px] sm:w-[380px] flex flex-col overflow-hidden" style={{ height: "500px" }}>
           {/* Header */}
