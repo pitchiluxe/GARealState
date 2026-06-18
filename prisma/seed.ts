@@ -559,6 +559,646 @@ Appraiser weighs all three approaches and reconciles to a **final value estimate
       product: "ALL",
       difficulty: "BEGINNER",
     },
+    // MATH
+    {
+      slug: "real-estate-math-commission",
+      title: "Commission Calculations — Step by Step",
+      summary: "How to calculate broker and agent commissions, splits, and net proceeds for the GA exam.",
+      content: `# Commission Math for the GA Exam
+
+## Basic Commission Formula
+Commission = Sale Price × Commission Rate
+
+**Example**: $350,000 home × 6% = $21,000 total commission
+
+## Commission Splits
+Most commissions are split between listing broker and selling broker (50/50 is common).
+
+**Example**:
+- Total commission: $21,000
+- Listing broker gets: $10,500 (50%)
+- Selling broker gets: $10,500 (50%)
+- Each agent gets 70% of their broker's share: $7,350
+
+## Net Proceeds to Seller
+Net Proceeds = Sale Price - Mortgage Payoff - Commission - Closing Costs
+
+**Example**:
+- Sale price: $350,000
+- Mortgage balance: $220,000
+- Commission (6%): $21,000
+- Closing costs: $4,500
+- **Net to seller: $104,500**
+
+## Proration Formula (Taxes)
+Daily Rate = Annual Amount ÷ 365
+Seller's Share = Daily Rate × Days Seller Owned in Period
+
+**Example**: Annual taxes = $3,650 | Closing date = March 31 (day 90)
+- Daily rate: $3,650 ÷ 365 = **$10/day**
+- Seller owes: $10 × 90 = **$900**
+
+## Exam Tips
+- Commission is always based on SALE PRICE, not list price
+- If the seller pays 6% and it splits 50/50, each broker gets 3%
+- "Net listing" (broker keeps above a set price) is ILLEGAL in Georgia`,
+      category: "MATH",
+      tags: JSON.stringify(["commission", "math", "proration", "calculations", "net proceeds"]),
+      product: "ALL",
+      difficulty: "BEGINNER",
+    },
+    {
+      slug: "real-estate-math-loan",
+      title: "Loan & Mortgage Math — LTV, Points, Monthly Payments",
+      summary: "Loan-to-value ratio, discount points, monthly payment, and amortization calculations for the PSI exam.",
+      content: `# Mortgage Math Formulas
+
+## Loan-to-Value (LTV)
+LTV = Loan Amount ÷ Appraised Value × 100
+
+**Example**: $280,000 loan on $350,000 home
+LTV = 280,000 ÷ 350,000 × 100 = **80% LTV**
+
+PMI is required when LTV > 80% (conventional loan)
+
+## Down Payment
+Down Payment = Purchase Price × Down Payment %
+Loan Amount = Purchase Price - Down Payment
+
+**Example**: $350,000 × 20% down = $70,000 down | $280,000 loan
+
+## Discount Points
+1 point = 1% of the loan amount
+Paid to LOWER the interest rate (each point ≈ lowers rate by 0.125%)
+
+**Example**: 2 points on $280,000 loan = 2% × $280,000 = **$5,600** paid at closing
+
+## Monthly Payment (PITI)
+PITI = Principal + Interest + Taxes + Insurance
+
+Quick approximation: $5.37/month per $1,000 borrowed at 6% for 30 years
+
+**Example**: $280,000 loan × $5.37 ÷ 1,000 = approx. **$1,504/month** P&I
+
+## Qualifying Ratios
+- Front-end ratio: Housing costs ÷ Gross monthly income ≤ 28%
+- Back-end (DTI): All monthly debts ÷ Gross monthly income ≤ 36-43%
+
+## Exam Tips
+- Points are always calculated on the LOAN amount, not sale price
+- LTV determines if PMI is needed, not the down payment dollar amount
+- Higher points = lower rate = more upfront cost`,
+      category: "MATH",
+      tags: JSON.stringify(["LTV", "points", "mortgage math", "down payment", "DTI"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    {
+      slug: "real-estate-math-cap-rate",
+      title: "Cap Rate, GRM & Income Property Math",
+      summary: "Capitalization rate, gross rent multiplier, NOI and income approach calculations for investment property.",
+      content: `# Income Property Math
+
+## Net Operating Income (NOI)
+NOI = Gross Rental Income - Vacancy Loss - Operating Expenses
+
+**Note**: Do NOT subtract mortgage payments — NOI is before debt service
+
+**Example**:
+- Gross annual rent: $120,000
+- Vacancy (5%): -$6,000
+- Operating expenses: -$40,000
+- **NOI = $74,000**
+
+## Capitalization Rate (Cap Rate)
+Cap Rate = NOI ÷ Property Value × 100
+Property Value = NOI ÷ Cap Rate
+
+**Example**: NOI = $74,000 | Cap Rate = 7%
+Value = $74,000 ÷ 0.07 = **$1,057,143**
+
+**Key Relationship**: Cap rate ↑ → Value ↓ (inverse relationship)
+
+## Gross Rent Multiplier (GRM)
+GRM = Sale Price ÷ Monthly Gross Rent
+Estimated Value = GRM × Monthly Rent
+
+**Example**: Similar building sold for $600,000 with $5,000/month rent
+GRM = $600,000 ÷ $5,000 = **120**
+Subject property at $4,800/month: $4,800 × 120 = **$576,000**
+
+## Cash-on-Cash Return
+Annual Cash Flow ÷ Total Cash Invested × 100
+
+## Exam Tips
+- Cap rate is used for INCOME properties only
+- GRM uses MONTHLY rent; annual GRM uses annual rent (know which one the question uses)
+- Higher cap rate = RISKIER investment = LOWER price
+- The IRV formula: Income = Rate × Value`,
+      category: "MATH",
+      tags: JSON.stringify(["cap rate", "GRM", "NOI", "income property", "investment", "IRV"]),
+      product: "ALL",
+      difficulty: "ADVANCED",
+    },
+    // PROPERTY
+    {
+      slug: "land-use-zoning",
+      title: "Land Use Controls, Zoning & Planning in Georgia",
+      summary: "Zoning classifications, variances, nonconforming uses, and government land use powers tested on the GA exam.",
+      content: `# Land Use Controls & Zoning
+
+## Public Land Use Controls (Government Powers)
+
+### Police Power (Most Important)
+- Government's right to regulate land use for public health, safety, morals, welfare
+- Source of zoning authority
+- No compensation required unless it's a taking
+
+### Eminent Domain
+- Government takes private property for public use
+- Must pay **just compensation**
+- Condemnation = legal process of eminent domain
+- Inverse condemnation: owner sues when government takes without compensation
+
+### Taxation
+- Ad valorem (property) taxes — based on assessed value
+- Special assessments for specific improvements (sidewalks, sewers)
+
+### Escheat
+- Property reverts to state when owner dies without a will or heirs
+
+## Zoning Classifications
+- **R** (Residential): R-1, R-2, R-3 (single-family, multi-family, etc.)
+- **C** (Commercial): retail, offices
+- **I** (Industrial): manufacturing, warehousing
+- **A** (Agricultural): farming
+
+## Special Zoning Concepts
+
+**Nonconforming Use**
+- Existing use that no longer complies after rezoning
+- "Grandfathered" — can continue but cannot be expanded
+- If destroyed, must be rebuilt to current code
+
+**Variance**
+- Permission to deviate from zoning requirements
+- Area variance (size/setback) vs. use variance (different use)
+- Must show undue hardship
+
+**Conditional Use Permit (Special Exception)**
+- Allows a use that's not normally permitted in a zone
+- Schools and churches in residential zones
+
+**Spot Zoning**
+- Rezoning a single parcel differently from surrounding area
+- Generally illegal if arbitrary
+
+## Exam Tips
+- Buffer zones separate incompatible uses
+- Zoning is police power — no compensation
+- Eminent domain requires compensation`,
+      category: "PROPERTY",
+      tags: JSON.stringify(["zoning", "land use", "eminent domain", "police power", "variance", "nonconforming"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    {
+      slug: "environmental-issues",
+      title: "Environmental Issues in Georgia Real Estate",
+      summary: "Lead paint, asbestos, radon, mold, underground storage tanks and disclosure requirements for the GA exam.",
+      content: `# Environmental Issues in Real Estate
+
+## Lead-Based Paint
+- Banned in residential use in **1978**
+- Disclosure required for homes built BEFORE 1978
+- Federal law: sellers must provide EPA pamphlet "Protect Your Family from Lead"
+- Buyers get 10-day window to test (can waive)
+- Applies to sales AND rentals
+
+## Asbestos
+- Common in buildings built before 1980
+- Used in insulation, floor tiles, roof shingles
+- Friable asbestos (can crumble) = immediate hazard
+- Non-friable (intact) may not require immediate removal
+- Must be handled by licensed abatement contractor
+
+## Radon
+- Naturally occurring radioactive gas from uranium decay
+- Colorless, odorless — only detected by testing
+- EPA action level: **4 pCi/L**
+- Mitigation: sub-slab depressurization system
+- Georgia has moderate radon levels in some areas
+
+## Mold
+- Requires moisture source
+- Not federally regulated like lead/asbestos
+- Georgia: no specific mold disclosure law but material defect disclosure applies
+- Seller must disclose known water intrusion issues
+
+## Underground Storage Tanks (USTs)
+- Petroleum products in soil = contamination concern
+- EPA regulates USTs at gas stations, dry cleaners, etc.
+- Phase I Environmental Site Assessment: records review (no soil testing)
+- Phase II: actual soil/water sampling
+
+## CERCLA (Superfund)
+- Comprehensive Environmental Response, Compensation, and Liability Act
+- Holds current AND past owners liable for cleanup
+- Innocent landowner defense: conducted proper due diligence
+
+## Exam Tips
+- Lead paint disclosure = pre-1978 homes only
+- Radon action level = 4 pCi/L
+- CERCLA = Superfund = liability for contamination`,
+      category: "PROPERTY",
+      tags: JSON.stringify(["environmental", "lead paint", "asbestos", "radon", "mold", "CERCLA", "disclosure"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    // LICENSE LAW
+    {
+      slug: "brreta-brokerage-relationships",
+      title: "BRRETA — Brokerage Relationships in Real Estate Transactions Act",
+      summary: "Georgia's BRRETA law covering broker duties, disclosure requirements, and types of brokerage engagements.",
+      content: `# BRRETA — Brokerage Relationships in Real Estate Transactions Act
+
+BRRETA (O.C.G.A. § 10-6A) governs the relationships between real estate licensees and the public in Georgia. It is one of the most heavily tested topics on the Georgia PSI exam.
+
+## Key Provisions
+
+### Brokerage Engagement Required
+- Must be in writing before an agent represents a buyer or seller
+- Creates the agency relationship
+- Must be signed by both parties
+
+### First Substantive Contact Rule
+Georgia agents must present the **"Brokerage Relationships in Real Estate Transactions" disclosure form** at first substantive contact with a potential client or customer.
+
+### Types of Brokerage Relationships Under BRRETA
+
+**Seller's Broker**
+- Represents the seller
+- Owes fiduciary duties to seller
+- Must disclose all known material facts about the property to buyers
+
+**Buyer's Broker**
+- Represents the buyer
+- Owes fiduciary duties to buyer
+- Must disclose all known material facts about the buyer to the seller? NO — must protect buyer's confidential info
+
+**Dual Agent**
+- Represents both buyer and seller in same transaction
+- Must get WRITTEN informed consent from both parties
+- Cannot disclose: buyer's max price or seller's min price
+
+**Designated Agent**
+- Broker designates one affiliated licensee for buyer, another for seller
+- Preferred alternative to dual agency
+- Each designated agent gives full representation
+
+### Minimum Duties to ALL Parties (Even Customers)
+1. Timely present all offers and counteroffers
+2. Disclose all adverse material facts
+3. Account for all money
+4. Comply with all fair housing laws
+
+## Exam Tips
+- BRRETA replaced the subagency default in Georgia
+- Disclosure form ≠ brokerage engagement — disclosure just explains the options
+- Dual agency requires WRITTEN consent, not just verbal
+- In Georgia, cooperating brokers are NOT automatically subagents`,
+      category: "LICENSE_LAW",
+      tags: JSON.stringify(["BRRETA", "brokerage engagement", "dual agency", "disclosure", "Georgia law"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    {
+      slug: "trust-accounts-georgia",
+      title: "Trust Accounts and Earnest Money Rules in Georgia",
+      summary: "GREC requirements for handling client funds, trust account rules, commingling, and conversion.",
+      content: `# Trust Accounts & Earnest Money in Georgia
+
+## Trust Account Requirements
+
+### Who Must Maintain a Trust Account
+- Every qualifying broker who holds client funds
+- Must be separate from operating accounts
+- Must be in a federally insured financial institution in Georgia
+
+### What Goes in the Trust Account
+- Earnest money deposits
+- Security deposits (property management)
+- Advance fees
+- Any client funds held on behalf of others
+
+## Earnest Money Rules
+
+### When Must Earnest Money Be Deposited?
+- Within **3 banking days** of contract acceptance
+- Broker must deposit in trust account (not personal account)
+
+### Who Holds Earnest Money?
+- Typically the listing broker (unless contract states otherwise)
+- Can be held by closing attorney if specified
+
+### Disputed Earnest Money
+If buyer and seller both claim the earnest money:
+1. Broker can **interplead** (turn over to court)
+2. Broker should NOT disburse without written consent from both parties OR court order
+3. Holding disputed funds is NOT commingling
+
+## Prohibited Conduct
+
+**Commingling** — mixing client funds with broker's personal/operating funds
+- GREC violation — grounds for license suspension or revocation
+
+**Conversion** — using client funds for personal use
+- Criminal offense AND GREC violation
+- One of the most serious violations
+
+## Examination Tips
+- 3 banking days to deposit — not 3 calendar days
+- Earnest money goes to ESCROW (trust), not to seller at contract signing
+- Broker cannot keep interest on trust account (unless specifically authorized)
+- Shortage in trust account = potential criminal liability`,
+      category: "LICENSE_LAW",
+      tags: JSON.stringify(["trust account", "earnest money", "commingling", "conversion", "GREC", "escrow"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    {
+      slug: "continuing-education-renewal",
+      title: "License Renewal and Continuing Education in Georgia",
+      summary: "CE hour requirements, renewal deadlines, late renewal, and inactive license rules for all license types.",
+      content: `# Georgia License Renewal & CE Requirements
+
+## Salesperson License Renewal
+
+### First Renewal (Post-License)
+- Must complete **36 hours** of post-license education
+- Completed within **12 months** of initial license activation
+- Failure to complete = license placed on inactive status
+
+### Subsequent Renewals
+- **36 hours** of CE every **4-year** renewal cycle
+- Must include:
+  - 3 hours: License Law
+  - 3 hours: Real Estate-related topics
+  - Remaining hours: any approved CE
+
+## Broker License Renewal
+- Same 36-hour CE requirement every 4 years
+- Additional broker-specific topics required
+
+## Renewal Deadlines
+- Licenses expire on a **4-year cycle** based on original issue month
+- Grace period: **90 days** after expiration with late fee
+- After 90 days: must retake education and exam (treated as new applicant)
+
+## Inactive License
+- Licensee cannot practice real estate while inactive
+- Can reactivate by: completing required CE and paying reinstatement fee
+- Inactive license can remain inactive indefinitely (just can't practice)
+
+## Lapsed License
+- Expired more than 90 days: must reapply as if new
+- Must meet all current education requirements
+- May need to retake the exam
+
+## Exam Tips
+- First-year post-license = 36 hours (not the regular CE)
+- Renewal cycle = 4 years (not annual)
+- 90-day grace period with late fee
+- GREC can audit CE completion records`,
+      category: "LICENSE_LAW",
+      tags: JSON.stringify(["CE", "continuing education", "license renewal", "post-license", "inactive license"]),
+      product: "ALL",
+      difficulty: "BEGINNER",
+    },
+    // CONTRACTS
+    {
+      slug: "contract-essentials-georgia",
+      title: "Essential Elements of a Valid Real Estate Contract",
+      summary: "The 6 required elements for an enforceable real estate contract and common contract defects.",
+      content: `# Valid Contract Requirements in Georgia
+
+## 6 Essential Elements (COWLIE)
+
+### 1. Competent Parties
+- Both parties must be of legal age (18+) and sound mind
+- Corporations act through authorized representatives
+- A minor's contract is **voidable** (minor can void it, adult cannot)
+
+### 2. Offer and Acceptance (Mutual Assent)
+- Meeting of the minds — both parties agree to same terms
+- Acceptance must be **absolute and unqualified**
+- Counteroffer = rejection of original offer + new offer
+
+### 3. Written Form (Statute of Frauds)
+- Real estate contracts must be **in writing** to be enforceable in Georgia
+- Oral real estate contracts are NOT enforceable
+- Must be signed by the party being charged
+
+### 4. Lawful Purpose
+- Contract cannot be for an illegal purpose
+- Example: contract to sell stolen property = void
+
+### 5. Consideration
+- Something of value exchanged by both parties
+- Money, property, a promise, a service
+- Earnest money is consideration but not required for validity
+- "Love and affection" can be valid consideration (gifts between family)
+
+### 6. Expressed with Sufficient Certainty
+- Essential terms must be clear: parties, property, price, closing date
+
+## Contract Status
+
+**Void**: Has no legal effect (illegal purpose, no consideration)
+**Voidable**: Valid but can be canceled by one party (minor's contract, fraud, duress)
+**Unenforceable**: Valid between parties but court won't enforce (oral real estate contract)
+**Valid/Enforceable**: Meets all requirements
+
+## Exam Tips
+- Statute of Frauds = real estate contracts must be written
+- Earnest money is NOT required for a valid contract
+- A counteroffer kills the original offer completely
+- Both parties must be notified of acceptance for it to be effective`,
+      category: "CONTRACTS",
+      tags: JSON.stringify(["contract elements", "statute of frauds", "void voidable", "consideration", "offer acceptance"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    // FINANCE
+    {
+      slug: "foreclosure-process-georgia",
+      title: "Foreclosure Process in Georgia",
+      summary: "Georgia's non-judicial foreclosure process, power of sale, redemption rights, and deficiency judgments.",
+      content: `# Foreclosure in Georgia
+
+## Georgia's Foreclosure Method
+Georgia is a **non-judicial foreclosure** state — lenders can foreclose WITHOUT going to court, as long as the deed of trust/mortgage has a **power of sale clause**.
+
+## Non-Judicial Foreclosure Process
+1. Borrower defaults on loan
+2. Lender sends **Notice of Default**
+3. Lender must advertise the sale in a local newspaper for **4 consecutive weeks**
+4. Foreclosure sale held on **first Tuesday of the month**
+5. Property sold at courthouse steps to highest bidder
+6. Minimum bid = outstanding loan balance
+
+## Key Players
+- **Mortgagor**: Borrower (owns the property)
+- **Mortgagee**: Lender (holds the mortgage)
+- **Trustee**: Third party who holds legal title in deed of trust
+
+## Deed Security Instruments in Georgia
+Georgia uses the **Security Deed** (not a traditional mortgage)
+- Lender holds legal title until loan is paid off
+- Borrower has equitable title
+- Makes non-judicial foreclosure easier
+
+## Deficiency Judgment
+If the foreclosure sale doesn't cover the full debt, lender can sue for the difference.
+- Georgia allows deficiency judgments
+- Must be filed within **30 days** of the foreclosure sale
+
+## Right of Redemption
+- Georgia has a **statutory right of redemption** after tax sales
+- For mortgage foreclosures: Georgia does NOT have a post-foreclosure redemption right (unlike some states)
+
+## Exam Tips
+- Georgia = non-judicial state = faster foreclosure
+- First Tuesday of the month = foreclosure sale day
+- 4-week newspaper advertisement required
+- Security Deed is Georgia's main security instrument (not mortgage)`,
+      category: "FINANCE",
+      tags: JSON.stringify(["foreclosure", "non-judicial", "security deed", "power of sale", "deficiency judgment"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    // VALUATION
+    {
+      slug: "depreciation-appraisal",
+      title: "Depreciation in the Cost Approach to Appraisal",
+      summary: "Three types of depreciation — physical, functional, and external — with examples and exam strategies.",
+      content: `# Depreciation in Real Estate Appraisal
+
+Depreciation is the **loss in value** from any cause. Used in the cost approach:
+**Value = Land + Improvements - Depreciation**
+
+## Type 1: Physical Deterioration
+Loss from physical wear, age, or damage.
+
+**Curable Physical Deterioration**
+- Cost to cure is LESS than the value it adds
+- Example: Replacing a broken water heater
+- Sometimes called "deferred maintenance"
+
+**Incurable Physical Deterioration**
+- Too expensive to cure relative to value added
+- Example: Foundation settling on an older building
+- Calculated as remaining useful life ratio
+
+## Type 2: Functional Obsolescence
+Loss from outdated or poor design features.
+
+**Curable Functional Obsolescence**
+- Example: Old kitchen that can be remodeled for less than value gained
+
+**Incurable Functional Obsolescence**
+- Example: A 5-bedroom house with only 1 bathroom
+- Example: Low ceiling heights
+
+**Superadequacy (Over-improvement)**
+- Feature that exceeds market standards: Olympic pool in modest neighborhood
+
+## Type 3: External (Economic) Obsolescence
+Loss from factors OUTSIDE the property — ALWAYS incurable.
+
+Examples:
+- Freeway built next to residential neighborhood
+- Factory opens near residential area
+- Economic decline in the area
+- Rezoning of neighboring land
+
+**Always incurable** because the cause is outside the property owner's control.
+
+## Quick Reference Table
+| Type | Curable? | Examples |
+|------|----------|---------|
+| Physical | Sometimes | Roof, HVAC, paint |
+| Functional | Sometimes | Bad floor plan, no bathrooms |
+| External | NEVER | Airport nearby, rezoning |
+
+## Exam Tips
+- External obsolescence is ALWAYS incurable
+- If the cost to fix > value gained = incurable
+- Only physical and functional can be curable
+- Depreciation in appraisal ≠ tax depreciation`,
+      category: "VALUATION",
+      tags: JSON.stringify(["depreciation", "cost approach", "physical obsolescence", "functional obsolescence", "external obsolescence"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
+    // AGENCY
+    {
+      slug: "disclosure-requirements-georgia",
+      title: "Property Disclosure Requirements in Georgia",
+      summary: "Seller's Property Disclosure Statement, material defects, latent vs. patent defects, and as-is sales.",
+      content: `# Property Disclosure in Georgia
+
+## Georgia Seller's Property Disclosure Statement
+- Sellers of residential property (1-4 units) must complete a **Seller's Property Disclosure Statement** (GAR Form F301)
+- Discloses known conditions affecting the property
+- Covers: structure, roof, plumbing, electrical, HVAC, environmental issues, HOA
+
+## Material vs. Immaterial Facts
+
+**Material Fact**
+- A fact that would affect a buyer's decision to purchase or the price they'd pay
+- MUST be disclosed by agents AND sellers
+- Examples: Roof leaks, foundation cracks, unpermitted additions, easements
+
+**Immaterial Fact**
+- Would not affect a reasonable buyer's decision
+- Not required to be disclosed
+
+## Latent vs. Patent Defects
+
+**Latent Defect** (Hidden)
+- Not visible on reasonable inspection
+- Must be disclosed if known
+- Example: Mold behind walls, known water intrusion
+
+**Patent Defect** (Visible)
+- Observable on reasonable inspection
+- Buyer is expected to notice during inspection
+- Example: Cracked driveway, obvious water stains
+
+## Psychological Stigma in Georgia
+Georgia does NOT require disclosure of:
+- Prior murders or deaths in the property
+- Prior occupant had AIDS/HIV
+- Nearby sex offender (buyer must check registry)
+
+## As-Is Sales
+- Buyer accepts the property in its current condition
+- Does NOT relieve seller/agent of obligation to disclose KNOWN material defects
+- Buyer can still conduct inspections
+
+## Agent's Disclosure Duty
+Georgia agents must disclose all **adverse material facts** they know about the property — even if the seller asks them not to.
+
+## Exam Tips
+- "As-is" doesn't eliminate duty to disclose known defects
+- Psychological stigma = not required in Georgia
+- Agent must disclose material facts even without asking`,
+      category: "AGENCY",
+      tags: JSON.stringify(["disclosure", "material defect", "latent defect", "seller disclosure", "as-is", "patent defect"]),
+      product: "ALL",
+      difficulty: "INTERMEDIATE",
+    },
     // CLOSING
     {
       slug: "closing-process",

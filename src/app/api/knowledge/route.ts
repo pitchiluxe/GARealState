@@ -39,6 +39,7 @@ export async function GET(req: Request) {
     ...a,
     tags: typeof a.tags === "string" ? (() => { try { return JSON.parse(a.tags); } catch { return []; } })() : a.tags,
     body: a.content,
+    helpfulVotes: a.helpful,
   }));
   const total = await prisma.kBArticle.count({ where });
 
