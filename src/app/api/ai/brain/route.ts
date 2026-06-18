@@ -41,20 +41,31 @@ export async function POST(req: Request) {
     const topic = random ? GA_RE_TOPICS[Math.floor(Math.random() * GA_RE_TOPICS.length)] : reqTopic;
     if (!topic) return NextResponse.json({ error: "topic required" }, { status: 400 });
 
+    // Fetch existing note titles so AI can cross-link with [[wiki-link]] syntax
+    const existingNotes = await prisma.obsidianNote.findMany({
+      select: { title: true },
+      orderBy: { updatedAt: "desc" },
+      take: 50,
+    });
+    const existingTitles = existingNotes.map(n => n.title);
+    const titlesHint = existingTitles.length
+      ? `\n\nExisting notes you MUST link to with [[Note Title]] syntax where relevant:\n${existingTitles.map(t => `- ${t}`).join("\n")}`
+      : "";
+
     const prompt = `Create a comprehensive Georgia Real Estate exam study note about: "${topic}"
 
-Write content that a student can use to master this topic for the GREC state licensing exam.
+Write content that a student can use to master this topic for the GREC state licensing exam.${titlesHint}
 
 Return ONLY valid JSON:
 {
   "title": "Clear, specific note title",
-  "content": "Study note content (400-600 words). Use ## for section headings, - for bullet points, **bold** for key terms and numbers. Include: definition, key rules/numbers, Georgia-specific details, common exam traps, examples.",
+  "content": "Study note content (400-600 words). Use ## for headings, - for bullets, **bold** for key terms. Include definition, key rules/numbers, Georgia-specific details, exam traps, examples. IMPORTANT: use [[Exact Note Title]] syntax to reference 2-5 related notes from the list above — embed them naturally in sentences (e.g. 'see also [[BRRETA]]).",
   "tags": ["tag1", "tag2", "tag3", "tag4"],
   "summary": "One sentence: what this note teaches"
 }`;
 
     const system = "You are a Georgia Real Estate exam prep expert. Return valid JSON only.";
-    const raw = await chat(system, prompt, 1200);
+    const raw = await chat(system, prompt, 1400);
     const data = JSON.parse(extractJson(raw));
 
     const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-" + Date.now();
