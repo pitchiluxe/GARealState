@@ -83,8 +83,8 @@
 
   /* ── Sidebar nav item ── */
   .sidebar-item {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400
-           transition-all duration-150 cursor-pointer;
+    @apply flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-gray-400
+           transition-all duration-150 cursor-pointer min-h-[44px];
   }
   .sidebar-item:hover { @apply bg-white/5 text-white; }
   .sidebar-item.active {
@@ -192,7 +192,7 @@
   .obsidian-editor::-webkit-scrollbar-thumb { background: rgba(232,130,90,0.3); border-radius: 2px; }
 
   .graph-control-btn {
-    @apply w-7 h-7 flex items-center justify-center rounded-lg bg-[#0d1526]/80
+    @apply w-9 h-9 flex items-center justify-center rounded-lg bg-[#0d1526]/80
            border border-white/10 text-gray-500 hover:text-white hover:border-re-500/40
            hover:bg-re-500/10 backdrop-blur-sm transition-all duration-150;
   }

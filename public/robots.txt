@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /copilot
+Disallow: /knowledge
+Disallow: /training
+Disallow: /classroom
+Disallow: /exam
+Disallow: /analytics
+Disallow: /leaderboard
+Disallow: /formulas
+Disallow: /updates
+Disallow: /youtube
+Disallow: /breakroom
+Disallow: /brain
+Disallow: /settings
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://garealstate.vercel.app/sitemap.xml

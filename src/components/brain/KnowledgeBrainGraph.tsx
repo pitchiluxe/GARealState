@@ -73,9 +73,9 @@ function hexToRgba(hex: string, alpha: number): string {
 interface Transform { x: number; y: number; k: number; }
 interface NodeAnim { t0: number; duration: number; }
 
-// Labels appear at 45% zoom and fade in smoothly from 45%→65%
-const LABEL_FADE_START = 0.45;
-const LABEL_FADE_END   = 0.65;
+// Labels appear only when zoomed all the way in (≥150%), fading 150%→200%
+const LABEL_FADE_START = 1.5;
+const LABEL_FADE_END   = 2.0;
 const MIN_ZOOM = 0.05;
 const MAX_ZOOM = 10;
 
@@ -367,16 +367,16 @@ export function KnowledgeBrainGraph({ nodes: rawNodes, edges: rawEdges, onSelect
       const links = visibleEdges.map(e => ({ ...e, source: e.sourceId, target: e.targetId }));
       const n = nodes.length;
 
-      const chargeStr = -Math.max(60, Math.min(280, 280 - n * 1.1));
-      const linkDist  = Math.max(55, Math.min(130, 55 + n * 0.35));
+      const chargeStr = -Math.max(180, Math.min(600, 600 - n * 1.5));
+      const linkDist  = Math.max(100, Math.min(220, 100 + n * 0.6));
 
       const simulation = d3.forceSimulation<BrainNode>(nodes)
         .alphaDecay(0.028)
         .velocityDecay(0.4)
-        .force("link",      d3.forceLink(links).id((d: unknown) => (d as BrainNode).id).distance(linkDist).strength(0.5))
-        .force("charge",    d3.forceManyBody().strength(chargeStr).distanceMax(450))
-        .force("center",    d3.forceCenter(width / 2, height / 2).strength(0.05))
-        .force("collision", d3.forceCollide().radius((d: unknown) => getNodeRadius(d as BrainNode) + 4).strength(0.8));
+        .force("link",      d3.forceLink(links).id((d: unknown) => (d as BrainNode).id).distance(linkDist).strength(0.4))
+        .force("charge",    d3.forceManyBody().strength(chargeStr).distanceMax(700))
+        .force("center",    d3.forceCenter(width / 2, height / 2).strength(0.04))
+        .force("collision", d3.forceCollide().radius((d: unknown) => getNodeRadius(d as BrainNode) + 18).strength(1.0));
 
       simulationRef.current = simulation;
       nodesRef.current      = nodes;
@@ -498,6 +498,114 @@ export function KnowledgeBrainGraph({ nodes: rawNodes, edges: rawEdges, onSelect
       canvas.addEventListener("click",      onClick);
       canvas.addEventListener("dblclick",   onDblClick);
       canvas.addEventListener("wheel",      onWheel, { passive: false });
+
+      // ── Touch events (mobile) ──────────────────────────────────────────
+      let lastTouchDist = 0;
+      let lastTapTime   = 0;
+      let touchStart0   = { x: 0, y: 0 };
+
+      const onTouchStart = (e: TouchEvent) => {
+        e.preventDefault();
+        if (e.touches.length === 1) {
+          const t0 = e.touches[0];
+          touchStart0 = { x: t0.clientX, y: t0.clientY };
+          mdPos = { x: t0.clientX, y: t0.clientY };
+          didDrag = false;
+          const node = getNodeAtPoint(t0.clientX, t0.clientY);
+          if (node) {
+            draggingNodeRef.current = node;
+            node.fx = node.x; node.fy = node.y;
+            simulation.alphaTarget(0.5).restart();
+          } else {
+            isPanning = true;
+            panStart  = { x: t0.clientX, y: t0.clientY };
+            panStartT = { ...transformRef.current };
+          }
+        } else if (e.touches.length === 2) {
+          isPanning = false;
+          if (draggingNodeRef.current) {
+            draggingNodeRef.current.fx = null; draggingNodeRef.current.fy = null;
+            draggingNodeRef.current = null;
+          }
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+          panStart  = { x: (e.touches[0].clientX + e.touches[1].clientX) / 2, y: (e.touches[0].clientY + e.touches[1].clientY) / 2 };
+          panStartT = { ...transformRef.current };
+        }
+      };
+
+      const onTouchMove = (e: TouchEvent) => {
+        e.preventDefault();
+        if (e.touches.length === 1) {
+          const t0 = e.touches[0];
+          const dx = t0.clientX - touchStart0.x, dy = t0.clientY - touchStart0.y;
+          if (Math.sqrt(dx * dx + dy * dy) > 5) didDrag = true;
+          if (draggingNodeRef.current) {
+            const rect = canvas.getBoundingClientRect();
+            const { x: tx, y: ty, k } = transformRef.current;
+            draggingNodeRef.current.fx = (t0.clientX - rect.left - tx) / k;
+            draggingNodeRef.current.fy = (t0.clientY - rect.top  - ty) / k;
+          } else if (isPanning) {
+            transformRef.current = {
+              k: panStartT.k,
+              x: panStartT.x + (t0.clientX - panStart.x),
+              y: panStartT.y + (t0.clientY - panStart.y),
+            };
+          }
+        } else if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (lastTouchDist > 0) {
+            const factor = dist / lastTouchDist;
+            const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            const rect = canvas.getBoundingClientRect();
+            const mx = cx - rect.left, my = cy - rect.top;
+            const { x: tx, y: ty, k } = transformRef.current;
+            const newK = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, k * factor));
+            transformRef.current = { k: newK, x: mx - (mx - tx) * (newK / k), y: my - (my - ty) * (newK / k) };
+            setZoom(newK);
+          }
+          lastTouchDist = dist;
+        }
+      };
+
+      const onTouchEnd = (e: TouchEvent) => {
+        e.preventDefault();
+        if (draggingNodeRef.current) {
+          draggingNodeRef.current.fx = null; draggingNodeRef.current.fy = null;
+          simulation.alphaTarget(0.08);
+          setTimeout(() => simulationRef.current?.alphaTarget(0), 500);
+          draggingNodeRef.current = null;
+        }
+        isPanning = false;
+        lastTouchDist = 0;
+
+        if (e.changedTouches.length === 1 && !didDrag) {
+          const t0 = e.changedTouches[0];
+          const node = getNodeAtPoint(t0.clientX, t0.clientY);
+          const now = Date.now();
+          if (node && now - lastTapTime < 300) {
+            onSelectNote(node.id);
+          } else if (node) {
+            setSelectedNodeId(prev => {
+              const next = prev === node.id ? null : node.id;
+              selectedNodeIdRef.current = next;
+              return next;
+            });
+          } else {
+            setSelectedNodeId(null);
+            selectedNodeIdRef.current = null;
+          }
+          lastTapTime = now;
+        }
+      };
+
+      canvas.addEventListener("touchstart",  onTouchStart, { passive: false });
+      canvas.addEventListener("touchmove",   onTouchMove,  { passive: false });
+      canvas.addEventListener("touchend",    onTouchEnd,   { passive: false });
 
       simulation.on("tick", () => { /* RAF loop draws every frame */ });
 
@@ -675,7 +783,7 @@ export function KnowledgeBrainGraph({ nodes: rawNodes, edges: rawEdges, onSelect
       {/* Label hint when zoom is low */}
       {zoom < LABEL_FADE_START && (
         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 text-[10px] text-gray-600 pointer-events-none select-none">
-          Scroll to zoom in · labels appear at {Math.round(LABEL_FADE_START * 100)}%
+          Scroll or pinch to zoom · labels appear at {Math.round(LABEL_FADE_START * 100)}%
         </div>
       )}
 
@@ -739,7 +847,7 @@ export function KnowledgeBrainGraph({ nodes: rawNodes, edges: rawEdges, onSelect
           </div>
           {!selectedNodeData && (
             <div className="text-[9px] text-gray-700 mt-1 border-t border-white/5 pt-1">
-              Click to highlight · Double-click to open
+              Tap to highlight · Double-tap to open
             </div>
           )}
         </div>
