@@ -121,9 +121,12 @@ export default function ExamPage() {
 
   async function generatePractice(append = false) {
     if (append) setAppendLoading(true);
-    else { setPracticeLoading(true); setPracticeQuestions([]); }
-    setPracticeAnswers({});
-    setPracticeRevealed({});
+    else {
+      setPracticeLoading(true);
+      setPracticeQuestions([]);
+      setPracticeAnswers({});
+      setPracticeRevealed({});
+    }
     try {
       const res = await fetch("/api/ai/exam", {
         method: "POST",
@@ -415,52 +418,98 @@ export default function ExamPage() {
       {/* ─── PRACTICE QUIZ TAB ───────────────────────────────────────────────── */}
       {tab === "practice" && (
         <div className="space-y-4">
-          {practiceLoading && practiceQuestions.length === 0 && (
-            <div className="glass-card p-10 flex flex-col items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-re-500/15 flex items-center justify-center">
-                <Sparkles className="w-7 h-7 text-re-400 animate-pulse" />
-              </div>
-              <div className="text-center">
-                <p className="text-white font-semibold mb-1">Generating 20 Practice Questions...</p>
-                <p className="text-gray-500 text-sm">AI is creating fresh {EXAM_TOPICS.find(t => t.id === practiceCategory)?.label} questions just for you</p>
-              </div>
-              <Loader2 className="w-6 h-6 animate-spin text-re-400" />
-            </div>
-          )}
-          <div className="glass-card p-5">
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2"><Sparkles className="w-4 h-4 text-re-400" /> AI-Generated Practice Questions</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="text-xs text-gray-400 mb-1.5 block">Topic Category</label>
-                <select value={practiceCategory} onChange={e => setPracticeCategory(e.target.value)}
-                  className="w-full bg-white/8 border border-white/15 rounded-xl px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-re-500/50">
-                  {EXAM_TOPICS.map(t => <option key={t.id} value={t.id}>{t.icon} {t.label}</option>)}
-                </select>
+          {/* AI Generator Panel — always visible */}
+          <div className="glass-card p-5 border border-re-500/25 bg-re-500/5">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-re-500/20 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-re-400" />
               </div>
               <div>
-                <label className="text-xs text-gray-400 mb-1.5 block">Difficulty</label>
-                <select value={practiceDifficulty} onChange={e => setPracticeDifficulty(e.target.value as Difficulty)}
-                  className="w-full bg-white/8 border border-white/15 rounded-xl px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-re-500/50">
-                  <option value="BEGINNER">Beginner</option>
-                  <option value="INTERMEDIATE">Intermediate</option>
-                  <option value="ADVANCED">Advanced</option>
-                </select>
+                <h3 className="text-white font-semibold text-sm">AI Practice Question Generator</h3>
+                <p className="text-gray-500 text-xs">Pick a topic and difficulty — AI generates 20 fresh questions instantly</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button onClick={() => generatePractice(false)} disabled={practiceLoading || appendLoading}
-                className="btn-primary flex items-center gap-2 text-sm">
-                {practiceLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                {practiceLoading ? "Generating..." : "Generate 20 Questions"}
+
+            {/* Topic chips */}
+            <div className="mb-4">
+              <label className="text-xs text-gray-400 mb-2 block">Select Topic</label>
+              <div className="flex flex-wrap gap-2">
+                {EXAM_TOPICS.map(t => (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      setPracticeCategory(t.id);
+                      setPracticeQuestions([]);
+                      setPracticeAnswers({});
+                      setPracticeRevealed({});
+                      setTimeout(() => generatePractice(false), 10);
+                    }}
+                    disabled={practiceLoading}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all disabled:opacity-50 ${
+                      practiceCategory === t.id
+                        ? "bg-re-500/25 border-re-500/50 text-re-300"
+                        : "bg-white/5 border-white/10 text-gray-400 hover:border-re-500/30 hover:text-gray-200"
+                    }`}
+                  >
+                    <span>{t.icon}</span>{t.label}
+                    {practiceCategory === t.id && practiceLoading && (
+                      <Loader2 className="w-3 h-3 animate-spin ml-1" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Difficulty + Generate button row */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-gray-400 whitespace-nowrap">Difficulty:</label>
+                {(["BEGINNER","INTERMEDIATE","ADVANCED"] as Difficulty[]).map(d => (
+                  <button
+                    key={d}
+                    onClick={() => { setPracticeDifficulty(d); setPracticeQuestions([]); setTimeout(() => generatePractice(false), 10); }}
+                    disabled={practiceLoading}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all disabled:opacity-50 ${
+                      practiceDifficulty === d
+                        ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
+                        : "bg-white/5 border-white/10 text-gray-500 hover:text-gray-300"
+                    }`}
+                  >
+                    {d === "BEGINNER" ? "Beginner" : d === "INTERMEDIATE" ? "Intermediate" : "Advanced"}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => generatePractice(false)}
+                disabled={practiceLoading || appendLoading}
+                className="btn-primary flex items-center gap-2 text-sm ml-auto"
+              >
+                {practiceLoading
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating 20 questions...</>
+                  : <><Sparkles className="w-4 h-4" /> Generate 20 Questions</>
+                }
               </button>
-              {practiceQuestions.length > 0 && (
-                <button onClick={() => { setPracticeQuestions([]); setPracticeAnswers({}); setPracticeRevealed({}); }}
-                  disabled={practiceLoading || appendLoading}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 text-sm transition-all disabled:opacity-40">
-                  <Trash2 className="w-3.5 h-3.5" /> Clear All
+
+              {practiceQuestions.length > 0 && !practiceLoading && (
+                <button
+                  onClick={() => { setPracticeQuestions([]); setPracticeAnswers({}); setPracticeRevealed({}); }}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs transition-all"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Clear
                 </button>
               )}
             </div>
+
+            {/* Loading state inline */}
+            {practiceLoading && (
+              <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-re-500/8 border border-re-500/15">
+                <Loader2 className="w-4 h-4 animate-spin text-re-400 flex-shrink-0" />
+                <p className="text-re-300 text-xs">
+                  Generating 20 <strong>{EXAM_TOPICS.find(t => t.id === practiceCategory)?.label}</strong> questions at <strong>{practiceDifficulty.toLowerCase()}</strong> level...
+                </p>
+              </div>
+            )}
           </div>
 
           {practiceQuestions.length > 0 && (
