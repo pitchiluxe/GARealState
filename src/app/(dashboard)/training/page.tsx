@@ -1,19 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { GraduationCap, Play, Loader2, CheckCircle, XCircle, RefreshCcw, Star, Send } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { GraduationCap, Play, Loader2, CheckCircle, XCircle, RefreshCcw, Star, Send, Sparkles, Trash2 } from "lucide-react";
 import { humanizeCategoryName } from "@/lib/utils/format";
-import { ExamCategory, GARELicenseType } from "@/types";
+import { ExamCategory } from "@/types";
 
-const SCENARIOS = [
-  { id: "salesperson_law", name: "License Law Basics", category: "LICENSE_LAW" as ExamCategory, difficulty: "BEGINNER", desc: "Cover requirements to obtain a GA salesperson license" },
-  { id: "contracts_psa", name: "Purchase & Sale Agreement", category: "CONTRACTS" as ExamCategory, difficulty: "INTERMEDIATE", desc: "Navigate a standard GA PSA transaction" },
-  { id: "agency_duties", name: "Agency Duties & Disclosure", category: "AGENCY" as ExamCategory, difficulty: "INTERMEDIATE", desc: "Handle client representation and disclosure requirements" },
-  { id: "finance_mortgage", name: "Mortgage Qualification", category: "FINANCE" as ExamCategory, difficulty: "ADVANCED", desc: "Walk through conventional mortgage math and qualification" },
-  { id: "fair_housing_case", name: "Fair Housing Scenario", category: "FAIR_HOUSING" as ExamCategory, difficulty: "BEGINNER", desc: "Respond to a potential fair housing violation scenario" },
-  { id: "valuation_cma", name: "CMA & Pricing Strategy", category: "VALUATION" as ExamCategory, difficulty: "ADVANCED", desc: "Complete a competitive market analysis and price opinion" },
+const EXAM_TOPICS = [
+  { id: "ALL",          label: "All Topics",       icon: "🍑" },
+  { id: "LICENSE_LAW",  label: "License Law",       icon: "⚖️" },
+  { id: "CONTRACTS",    label: "Contracts",         icon: "📄" },
+  { id: "AGENCY",       label: "Agency",            icon: "🤝" },
+  { id: "FINANCE",      label: "Finance",           icon: "💰" },
+  { id: "FAIR_HOUSING", label: "Fair Housing",      icon: "🏠" },
+  { id: "VALUATION",    label: "Valuation",         icon: "📊" },
+  { id: "MATH",         label: "RE Math",           icon: "🔢" },
+  { id: "CLOSING",      label: "Closing & Title",   icon: "🔑" },
+  { id: "PROPERTY",     label: "Property Rights",   icon: "🏘️" },
 ];
+
+const BASE_SCENARIOS = [
+  { id: "salesperson_law",   name: "License Law Basics",         category: "LICENSE_LAW"  as ExamCategory, difficulty: "BEGINNER",     desc: "Cover requirements to obtain a GA salesperson license" },
+  { id: "contracts_psa",     name: "Purchase & Sale Agreement",  category: "CONTRACTS"    as ExamCategory, difficulty: "INTERMEDIATE", desc: "Navigate a standard GA PSA transaction" },
+  { id: "agency_duties",     name: "Agency Duties & Disclosure", category: "AGENCY"       as ExamCategory, difficulty: "INTERMEDIATE", desc: "Handle client representation and disclosure requirements" },
+  { id: "finance_mortgage",  name: "Mortgage Qualification",     category: "FINANCE"      as ExamCategory, difficulty: "ADVANCED",     desc: "Walk through conventional mortgage math and qualification" },
+  { id: "fair_housing_case", name: "Fair Housing Scenario",      category: "FAIR_HOUSING" as ExamCategory, difficulty: "BEGINNER",     desc: "Respond to a potential fair housing violation scenario" },
+  { id: "valuation_cma",     name: "CMA & Pricing Strategy",     category: "VALUATION"    as ExamCategory, difficulty: "ADVANCED",     desc: "Complete a competitive market analysis and price opinion" },
+];
+
+type Scenario = typeof BASE_SCENARIOS[0];
 
 interface TrainingState {
   sessionId: string;
@@ -24,13 +39,26 @@ interface TrainingState {
   scoreBreakdown: Record<string, number> | null;
 }
 
+function difficultyStyle(d: string) {
+  if (d === "BEGINNER") return "bg-green-500/15 text-green-400";
+  if (d === "INTERMEDIATE") return "bg-yellow-500/15 text-yellow-400";
+  return "bg-red-500/15 text-red-400";
+}
+
 export default function TrainingPage() {
-  const [activeScenario, setActiveScenario] = useState<typeof SCENARIOS[0] | null>(null);
+  const [activeScenario, setActiveScenario] = useState<Scenario | null>(null);
   const [state, setState] = useState<TrainingState | null>(null);
   const [message, setMessage] = useState("");
+  const [aiScenarios, setAiScenarios] = useState<Scenario[]>([]);
+  const [genCategory, setGenCategory] = useState("ALL");
+  const [genCount, setGenCount] = useState(10);
+  const [genLoading, setGenLoading] = useState(false);
+  const [genResult, setGenResult] = useState<string | null>(null);
+
+  const allScenarios = [...BASE_SCENARIOS, ...aiScenarios];
 
   const startMutation = useMutation({
-    mutationFn: async (scenario: typeof SCENARIOS[0]) => {
+    mutationFn: async (scenario: Scenario) => {
       const res = await fetch("/api/ai/training", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -83,6 +111,32 @@ export default function TrainingPage() {
     },
   });
 
+  async function generateScenarios() {
+    setGenLoading(true);
+    setGenResult(null);
+    try {
+      const res = await fetch("/api/ai/scenarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category: genCategory === "ALL" ? null : genCategory, count: genCount }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      const newScenarios: Scenario[] = (json.scenarios || []).map((s: Scenario) => ({
+        ...s,
+        id: `ai_${s.id}_${Date.now()}`,
+        category: s.category as ExamCategory,
+      }));
+      setAiScenarios(prev => [...prev, ...newScenarios]);
+      setGenResult(`✅ Added ${newScenarios.length} new scenarios!`);
+      setTimeout(() => setGenResult(null), 4000);
+    } catch {
+      setGenResult("❌ Generation failed. Try again.");
+    } finally {
+      setGenLoading(false);
+    }
+  }
+
   function handleSend() {
     const msg = message.trim();
     if (!msg || !state) return;
@@ -100,28 +154,140 @@ export default function TrainingPage() {
     setActiveScenario(null);
   }
 
+  // ─── Scenario List View ───────────────────────────────────────────────────
   if (!state) {
     return (
       <div className="p-3 sm:p-6 space-y-4">
-        <div>
-          <h1 className="text-xl font-bold text-white">Exam Practice</h1>
-          <p className="text-gray-500 text-sm">AI-powered scenario-based training for the GA RE exam</p>
+        {/* Header */}
+        <div className="flex items-start justify-between flex-wrap gap-2">
+          <div>
+            <h1 className="text-xl font-bold text-white">Exam Practice</h1>
+            <p className="text-gray-500 text-sm">AI-powered scenario-based training for the GA RE exam</p>
+          </div>
+          <span className="text-xs text-gray-500 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5">
+            {allScenarios.length} scenarios
+          </span>
         </div>
+
+        {/* AI Generator Panel */}
+        <div className="glass-card p-5 border border-re-500/25 bg-re-500/5">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-re-500/20 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-re-400" />
+            </div>
+            <div>
+              <h3 className="text-white font-semibold text-sm">AI Scenario Generator</h3>
+              <p className="text-gray-500 text-xs">Generate 10–20 new practice scenarios on any exam topic</p>
+            </div>
+          </div>
+
+          {/* Topic chips */}
+          <div className="mb-4">
+            <label className="text-xs text-gray-400 mb-2 block">Select Topic</label>
+            <div className="flex flex-wrap gap-2">
+              {EXAM_TOPICS.map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setGenCategory(t.id)}
+                  disabled={genLoading}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all disabled:opacity-50 ${
+                    genCategory === t.id
+                      ? "bg-re-500/25 border-re-500/50 text-re-300"
+                      : "bg-white/5 border-white/10 text-gray-400 hover:border-re-500/30 hover:text-gray-200"
+                  }`}
+                >
+                  <span>{t.icon}</span>{t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Count + Generate row */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-gray-400 whitespace-nowrap">Count:</label>
+              {[10, 15, 20].map(n => (
+                <button
+                  key={n}
+                  onClick={() => setGenCount(n)}
+                  disabled={genLoading}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all disabled:opacity-50 ${
+                    genCount === n
+                      ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
+                      : "bg-white/5 border-white/10 text-gray-500 hover:text-gray-300"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={generateScenarios}
+              disabled={genLoading}
+              className="btn-primary flex items-center gap-2 text-sm ml-auto disabled:opacity-50"
+            >
+              {genLoading
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating scenarios...</>
+                : <><Sparkles className="w-4 h-4" /> Generate {genCount} Scenarios</>
+              }
+            </button>
+
+            {aiScenarios.length > 0 && !genLoading && (
+              <button
+                onClick={() => setAiScenarios([])}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs transition-all"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Clear AI
+              </button>
+            )}
+
+            {genResult && (
+              <span className={`text-sm font-medium ${genResult.startsWith("✅") ? "text-green-400" : "text-red-400"}`}>
+                {genResult}
+              </span>
+            )}
+          </div>
+
+          {genLoading && (
+            <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-re-500/8 border border-re-500/15">
+              <Loader2 className="w-4 h-4 animate-spin text-re-400 flex-shrink-0" />
+              <p className="text-re-300 text-xs">
+                AI is generating <strong>{genCount}</strong> new {genCategory !== "ALL" ? <strong>{EXAM_TOPICS.find(t => t.id === genCategory)?.label}</strong> : "mixed-topic"} practice scenarios...
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Scenarios Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {SCENARIOS.map(scenario => (
-            <div key={scenario.id} className="glass-card p-5">
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-xs px-2 py-0.5 rounded-full bg-re-500/15 text-re-400">{humanizeCategoryName(scenario.category)}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  scenario.difficulty === "BEGINNER" ? "bg-green-500/15 text-green-400" :
-                  scenario.difficulty === "INTERMEDIATE" ? "bg-yellow-500/15 text-yellow-400" :
-                  "bg-red-500/15 text-red-400"
-                }`}>{scenario.difficulty}</span>
+          {allScenarios.map(scenario => (
+            <div key={scenario.id} className={`glass-card p-5 flex flex-col gap-3 ${scenario.id.startsWith("ai_") ? "border-re-500/20" : ""}`}>
+              <div className="flex items-start justify-between">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-re-500/15 text-re-400">
+                  {humanizeCategoryName(scenario.category)}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  {scenario.id.startsWith("ai_") && (
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-re-500/20 text-re-400 font-medium">AI</span>
+                  )}
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${difficultyStyle(scenario.difficulty)}`}>
+                    {scenario.difficulty}
+                  </span>
+                </div>
               </div>
-              <h3 className="text-white font-semibold mb-1">{scenario.name}</h3>
-              <p className="text-gray-500 text-sm mb-4">{scenario.desc}</p>
-              <button onClick={() => startMutation.mutate(scenario)} disabled={startMutation.isPending} className="btn-primary w-full flex items-center justify-center gap-2 text-sm py-2">
-                {startMutation.isPending && startMutation.variables?.id === scenario.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+              <div className="flex-1">
+                <h3 className="text-white font-semibold mb-1">{scenario.name}</h3>
+                <p className="text-gray-500 text-sm">{scenario.desc}</p>
+              </div>
+              <button
+                onClick={() => startMutation.mutate(scenario)}
+                disabled={startMutation.isPending}
+                className="btn-primary w-full flex items-center justify-center gap-2 text-sm py-2"
+              >
+                {startMutation.isPending && startMutation.variables?.id === scenario.id
+                  ? <Loader2 className="w-4 h-4 animate-spin" />
+                  : <Play className="w-4 h-4" />}
                 Start Scenario
               </button>
             </div>
@@ -131,6 +297,7 @@ export default function TrainingPage() {
     );
   }
 
+  // ─── Active Training Session View ─────────────────────────────────────────
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
       {/* Header */}
