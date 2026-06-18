@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
   ClipboardList, Play, CheckCircle, XCircle, Loader2, RotateCcw, Brain,
@@ -79,6 +79,16 @@ export default function ExamPage() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMsgs, chatLoading]);
+
+  // Auto-generate 20 practice questions every time the Practice tab is opened
+  const prevTabRef = useRef<Tab | null>(null);
+  useEffect(() => {
+    if (tab === "practice" && prevTabRef.current !== "practice") {
+      generatePractice(false);
+    }
+    prevTabRef.current = tab;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
 
   async function loadLesson(topicId: string) {
     const topic = EXAM_TOPICS.find(t => t.id === topicId);
@@ -230,9 +240,20 @@ export default function ExamPage() {
           { id: "practice" as Tab, icon: Target, label: "Practice Quiz" },
           { id: "mock" as Tab, icon: ClipboardList, label: "Mock Exam" },
         ].map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
+          <button key={t.id} onClick={() => {
+            setTab(t.id);
+            // Reset practice questions so auto-generate fires fresh questions each visit
+            if (t.id === "practice") {
+              setPracticeQuestions([]);
+              setPracticeAnswers({});
+              setPracticeRevealed({});
+            }
+          }}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === t.id ? "bg-re-500/20 text-re-400 border border-re-500/30" : "text-gray-500 hover:text-gray-300"}`}>
             <t.icon className="w-3.5 h-3.5" />{t.label}
+            {t.id === "practice" && tab === "practice" && practiceLoading && (
+              <Loader2 className="w-3 h-3 animate-spin ml-1" />
+            )}
           </button>
         ))}
       </div>
@@ -394,6 +415,18 @@ export default function ExamPage() {
       {/* ─── PRACTICE QUIZ TAB ───────────────────────────────────────────────── */}
       {tab === "practice" && (
         <div className="space-y-4">
+          {practiceLoading && practiceQuestions.length === 0 && (
+            <div className="glass-card p-10 flex flex-col items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-re-500/15 flex items-center justify-center">
+                <Sparkles className="w-7 h-7 text-re-400 animate-pulse" />
+              </div>
+              <div className="text-center">
+                <p className="text-white font-semibold mb-1">Generating 20 Practice Questions...</p>
+                <p className="text-gray-500 text-sm">AI is creating fresh {EXAM_TOPICS.find(t => t.id === practiceCategory)?.label} questions just for you</p>
+              </div>
+              <Loader2 className="w-6 h-6 animate-spin text-re-400" />
+            </div>
+          )}
           <div className="glass-card p-5">
             <h3 className="text-white font-semibold mb-4 flex items-center gap-2"><Sparkles className="w-4 h-4 text-re-400" /> AI-Generated Practice Questions</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
